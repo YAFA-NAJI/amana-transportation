@@ -85,7 +85,7 @@ function MapUpdater({ selectedRouteId, lines }: { selectedRouteId?: number; line
 export default function Map({ className = "", lines, selectedRouteId, onRouteSelect }: MapProps) {
   const activeLines = lines.filter(l => l.status.toLowerCase() === 'active');
   const selectedLine = lines.find(l => l.id === selectedRouteId);
-const markerRefs = useRef<{ [key: number]: any }>({});
+const markerRefs = useRef<Record<number, L.Marker | null>>({});
 
   const defaultCenter: [number, number] = [3.1390, 101.6869];
   const defaultZoom = 11;
