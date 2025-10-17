@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import type { Marker as LeafletMarker } from "leaflet";
 import L from "leaflet";
@@ -86,6 +86,15 @@ export default function Map({
   onRouteSelect,
   className = "",
 }: MapProps) {
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  useEffect(() => {
+    const handleResize = () =>
+      setIsMobile(typeof window !== "undefined" && window.innerWidth < 640);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const activeLines = lines.filter((l) => l.status.toLowerCase() === "active");
   const selectedLine = lines.find((l) => l.id === selectedRouteId);
  const markerRefs = useRef<{ [key: number]: any }>({});
@@ -103,14 +112,14 @@ export default function Map({
     <div className={`bg-white rounded-xl shadow-md border border-slate-200 p-4 ${className}`}>
       <h3 className="text-lg font-semibold text-slate-800 mb-4">Transportation Map</h3>
 
-      <div className="relative rounded-lg overflow-hidden border border-slate-200 min-h-[500px]">
+      <div className="relative rounded-lg overflow-hidden border border-slate-200 min-h-[300px] sm:min-h-[500px]">
         <MapContainer
           {...({
             center: selectedLine
               ? [selectedLine.current_location.latitude, selectedLine.current_location.longitude]
               : defaultCenter,
-            zoom: 11,
-            style: { height: "500px", width: "100%" },
+            zoom: isMobile ? 13 : 11,
+            className: "h-[60vh] sm:h-[500px] w-full",
           } as any)}
          >
           <TileLayer
@@ -222,7 +231,7 @@ export default function Map({
         </MapContainer>
 
         {/* Legend */}
-        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md rounded-xl p-3 shadow-lg text-xs font-medium space-y-1">
+        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md rounded-xl p-2 sm:p-3 shadow-lg text-xs sm:text-sm font-medium space-y-1">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center text-xs">
               🚌
@@ -247,7 +256,7 @@ export default function Map({
       </div>
 
       {/* Stats Cards */}
-      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs sm:text-sm">
         <div className="p-2 bg-white/90 backdrop-blur-md rounded-xl shadow flex justify-between items-center">
           <span>Total Routes</span>
           <span className="font-semibold">{lines.length}</span>
