@@ -5,7 +5,7 @@ interface BrandLogoProps {
   className?: string;
 }
 
-export default function BrandLogo({ className = "w-14 h-14" }: BrandLogoProps) {
+export default function BrandLogo({ className = "w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16" }: BrandLogoProps) {
   return (
     <div
       className={`rounded-full bg-gradient-to-br from-emerald-400 to-sky-600 shadow-md flex items-center justify-center ${className}`}
@@ -13,13 +13,14 @@ export default function BrandLogo({ className = "w-14 h-14" }: BrandLogoProps) {
       role="img"
     >
       <svg
-        width="38"
-        height="38"
+        width="100%"
+        height="100%"
         viewBox="0 0 38 38"
-        fill="none"
+        preserveAspectRatio="xMidYMid meet"
         xmlns="http://www.w3.org/2000/svg"
         className="text-white"
         aria-hidden="true"
+        focusable="false"
       >
         <circle
           cx="19"
