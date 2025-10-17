@@ -1,4 +1,3 @@
-// components/BrandLogo.tsx
 "use client";
 import React from "react";
 
@@ -6,35 +5,59 @@ interface BrandLogoProps {
   className?: string;
 }
 
-export default function BrandLogo({ className = "w-12 h-12" }: BrandLogoProps) {
+export default function BrandLogo({ className = "w-14 h-14" }: BrandLogoProps) {
   return (
     <div
-      className={`rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-700 shadow-lg flex items-center justify-center ${className}`}
+      className={`rounded-full bg-gradient-to-br from-emerald-400 to-sky-600 shadow-md flex items-center justify-center ${className}`}
       aria-label="Amana Transportation Logo"
       role="img"
     >
       <svg
-        width="36"
-        height="36"
-        viewBox="0 0 36 36"
+        width="38"
+        height="38"
+        viewBox="0 0 38 38"
         fill="none"
-        className="text-white"
         xmlns="http://www.w3.org/2000/svg"
+        className="text-white"
         aria-hidden="true"
       >
-        <circle cx="18" cy="18" r="16" stroke="currentColor" strokeWidth="2.5" fill="url(#logo-gradient)" />
-        <path
-          d="M10 22c2-4 6-10 8-10s6 6 8 10"
-          stroke="currentColor"
+        <circle
+          cx="19"
+          cy="19"
+          r="17"
+          stroke="white"
           strokeWidth="2"
-          strokeLinecap="round"
-          fill="none"
+          fill="url(#circle-gradient)"
         />
-        <circle cx="18" cy="18" r="3" fill="currentColor" />
+        <rect
+          x="10"
+          y="13"
+          width="18"
+          height="12"
+          rx="3"
+          fill="white"
+          stroke="none"
+        />
+        <rect x="12" y="15" width="14" height="6" rx="1" fill="#0ea5e9" />
+        <circle cx="14" cy="26" r="1.8" fill="#059669" />
+        <circle cx="24" cy="26" r="1.8" fill="#059669" />
+        <path
+          d="M11 20h16"
+          stroke="white"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
         <defs>
-          <linearGradient id="logo-gradient" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <linearGradient
+            id="circle-gradient"
+            x1="0"
+            y1="0"
+            x2="38"
+            y2="38"
+            gradientUnits="userSpaceOnUse"
+          >
             <stop stopColor="#34d399" />
-            <stop offset="1" stopColor="#059669" />
+            <stop offset="1" stopColor="#0ea5e9" />
           </linearGradient>
         </defs>
       </svg>
