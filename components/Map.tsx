@@ -88,7 +88,8 @@ export default function Map({
 }: MapProps) {
   const activeLines = lines.filter((l) => l.status.toLowerCase() === "active");
   const selectedLine = lines.find((l) => l.id === selectedRouteId);
-  const markerRefs = useRef<{ [key: number]: LeafletMarker }>({}); // ✅ Fixed type
+ const markerRefs = useRef<{ [key: number]: any }>({});
+
 
   const defaultCenter: [number, number] = [3.139, 101.6869];
 
