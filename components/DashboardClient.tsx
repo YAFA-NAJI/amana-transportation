@@ -15,7 +15,7 @@ export default function DashboardClient({ lines }: DashboardClientProps) {
   const handleRouteSelect = (routeId: number) => setSelectedRouteId(routeId);
 
   return (
-    <div className="space-y-10 p-6 bg-gray-50 min-h-screen">
+    <div className="space-y-10 p-4 sm:p-6 bg-gray-50 min-h-screen">
       {/* GRID: MAP & ROUTES */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* LIVE MAP */}
@@ -33,11 +33,13 @@ export default function DashboardClient({ lines }: DashboardClientProps) {
             </div>
           </div>
           <div className="rounded-xl overflow-hidden border border-gray-200 shadow-inner">
-            <MapWrapper
-              lines={lines}
-              selectedRouteId={selectedRouteId}
-              onRouteSelect={handleRouteSelect}
-            />
+            <div className="w-full h-64 sm:h-80 md:h-96">
+              <MapWrapper
+                lines={lines}
+                selectedRouteId={selectedRouteId}
+                onRouteSelect={handleRouteSelect}
+              />
+            </div>
           </div>
         </section>
 
@@ -56,11 +58,13 @@ export default function DashboardClient({ lines }: DashboardClientProps) {
             </div>
           </div>
           <div className="rounded-xl overflow-hidden border border-gray-200 shadow-inner hover:shadow-lg transition-shadow duration-300">
-            <RouteList
-              lines={lines}
-              selectedRouteId={selectedRouteId}
-              onRouteSelect={handleRouteSelect}
-            />
+            <div className="w-full max-h-[40vh] sm:max-h-[60vh] overflow-auto">
+              <RouteList
+                lines={lines}
+                selectedRouteId={selectedRouteId}
+                onRouteSelect={handleRouteSelect}
+              />
+            </div>
           </div>
         </section>
       </div>
@@ -80,7 +84,9 @@ export default function DashboardClient({ lines }: DashboardClientProps) {
           </div>
         </div>
         <div className="rounded-xl overflow-hidden border border-gray-200 shadow-inner">
-          <Schedule lines={lines} />
+          <div className="w-full max-h-[40vh] sm:max-h-[60vh] overflow-auto">
+            <Schedule lines={lines} />
+          </div>
         </div>
       </section>
     </div>
