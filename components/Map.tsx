@@ -105,14 +105,17 @@ export default function Map({
 
       <div className="relative rounded-lg overflow-hidden border border-slate-200 min-h-[500px]">
         <MapContainer
-          center={
-            selectedLine
-              ? [selectedLine.current_location.latitude, selectedLine.current_location.longitude]
-              : defaultCenter
-          }
-          zoom={11}
-          style={{ height: "500px", width: "100%" }}
-        >
+  center={
+    selectedLine
+      ? [selectedLine.current_location.latitude, selectedLine.current_location.longitude]
+      : defaultCenter
+  }
+  zoom={11}
+  style={{ height: "500px", width: "100%" }}
+  //@ts-ignore
+>
+
+
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
