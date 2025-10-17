@@ -139,20 +139,20 @@ export default function Map({ className = "", lines, selectedRouteId, onRouteSel
       
       {/* Real Map Container */}
 <div className="relative rounded-lg min-h-[500px] overflow-hidden border border-slate-200">
-  <MapContainer
-    style={{ height: '500px', width: '100%' }}
-    className="z-0"
-    whenCreated={(map) => {
-      if (selectedLine) {
-        map.setView(
-          [selectedLine.current_location.latitude, selectedLine.current_location.longitude],
-          defaultZoom
-        );
-      } else {
-        map.setView(defaultCenter, defaultZoom);
-      }
-    }}
-  >
+ <MapContainer
+  style={{ height: '500px', width: '100%' }}
+  whenCreated={(map) => {
+    if (selectedLine) {
+      map.setView(
+        [selectedLine.current_location.latitude, selectedLine.current_location.longitude],
+        defaultZoom
+      );
+    } else {
+      map.setView(defaultCenter, defaultZoom);
+    }
+  }}
+>
+
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
