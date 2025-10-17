@@ -16,44 +16,44 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// Pulsing bus icon
-const createBusIcon = (color: string) =>
+// Pulsing bus icon (accepts optional size)
+const createBusIcon = (color: string, size = 24) =>
   L.divIcon({
     html: `<div style="
       background-color: ${color};
-      width: 24px;
-      height: 24px;
+      width: ${size}px;
+      height: ${size}px;
       border-radius: 50%;
       border: 3px solid white;
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: ${Math.max(10, Math.floor(size * 0.5))}px;
       color: white;
       animation: pulse 1.5s infinite;
     ">🚌</div>`,
     className: "custom-bus-icon",
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
+    iconSize: [size, size],
+    iconAnchor: [Math.floor(size / 2), Math.floor(size / 2)],
   });
 
-// Stop icon
-const createStopIcon = (isNextStop: boolean) => {
+// Stop icon (accepts optional size)
+const createStopIcon = (isNextStop: boolean, size = 14) => {
   const color = isNextStop ? "#f97316" : "#64748b";
   return L.divIcon({
     html: `<div style="
       background-color: ${color};
-      width: 14px;
-      height: 14px;
+      width: ${size}px;
+      height: ${size}px;
       border-radius: 50%;
       border: 2px solid white;
       box-shadow: 0 1px 3px rgba(0,0,0,0.3);
       ${isNextStop ? "animation: pulse 1.5s infinite;" : ""}
     "></div>`,
     className: "custom-stop-icon",
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
+    iconSize: [size, size],
+    iconAnchor: [Math.floor(size / 2), Math.floor(size / 2)],
   });
 };
 
@@ -119,6 +119,10 @@ export default function Map({
               ? [selectedLine.current_location.latitude, selectedLine.current_location.longitude]
               : defaultCenter,
             zoom: isMobile ? 13 : 11,
+            // disable scroll wheel zoom on mobile to avoid accidental zooms; keep touchZoom/dragging enabled
+            scrollWheelZoom: !isMobile,
+            touchZoom: true,
+            dragging: true,
             className: "h-[60vh] sm:h-[500px] w-full",
           } as any)}
          >
@@ -134,7 +138,7 @@ export default function Map({
           {/* Bus Markers */}
           {activeLines.map((line: any) => {
              const isSelected = line.id === selectedRouteId;
-             const busIcon = createBusIcon(isSelected ? "#10b981" : "#3b82f6");
+             const busIcon = createBusIcon(isSelected ? "#10b981" : "#3b82f6", isMobile ? 32 : 24);
  
              return (
                <Marker
@@ -149,7 +153,11 @@ export default function Map({
                  }}
                >
                 <Popup>
-                  <div className="p-3 bg-white/90 backdrop-blur-md rounded-xl shadow-lg min-w-[220px]">
+                  <div
+                    className={`p-3 bg-white/90 backdrop-blur-md rounded-xl shadow-lg ${
+                      isMobile ? "w-[86vw] max-w-[320px]" : "min-w-[220px]"
+                    }`}
+                  >
                     <div className="flex justify-between mb-1">
                       <span className="font-semibold text-sm">{line.route_number}</span>
                       <span
@@ -190,11 +198,11 @@ export default function Map({
                 {...({
                   key: `stop-${stop.id}`,
                   position: [stop.latitude, stop.longitude],
-                  icon: createStopIcon(stop.is_next_stop),
+                  icon: createStopIcon(stop.is_next_stop, isMobile ? 18 : 14),
                 } as any)}
               >
                 <Popup>
-                  <div className="p-2 text-xs text-slate-700">
+                  <div className={`p-2 text-xs text-slate-700 ${isMobile ? "w-[70vw] max-w-[260px]" : ""}`}>
                     <div className="font-semibold">{stop.name}</div>
                     <div>Route {line.route_number}</div>
                     <div className="text-orange-600 font-medium">
