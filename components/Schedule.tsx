@@ -29,7 +29,7 @@ export default function Schedule({ lines }: Props) {
         id: line.id,
         routeName: line.name,
         routeNumber: line.route_number,
-        status: line.status.toLowerCase(),
+        status: (line.status || "unknown").toLowerCase(),
         nextStopName: nextStop?.name || "—",
         arrival: nextStop?.estimated_arrival || "N/A",
         driver: line.driver?.name || "N/A",
@@ -40,59 +40,69 @@ export default function Schedule({ lines }: Props) {
     });
   }, [lines]);
 
+  // map fixed classes for statuses to avoid dynamic tailwind names
+  const statusMap: Record<string, { bg: string; text: string; progressBg: string }> = {
+    active: { bg: "bg-emerald-500", text: "text-white", progressBg: "bg-emerald-500" },
+    maintenance: { bg: "bg-amber-500", text: "text-white", progressBg: "bg-amber-500" },
+    delayed: { bg: "bg-amber-600", text: "text-white", progressBg: "bg-amber-600" },
+    unknown: { bg: "bg-slate-400", text: "text-white", progressBg: "bg-slate-400" },
+  };
+
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">Routes — Next Stop & Arrival</h3>
+    <section className="rounded-2xl border border-slate-200 bg-white p-3 sm:p-4 shadow-sm">
+      <h3 className="text-lg font-semibold text-slate-900 mb-3">Routes — Next Stop & Arrival</h3>
 
       {rows.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {rows.map((r) => (
-            <div
-              key={r.id}
-              className="flex flex-col p-4 bg-gradient-to-tr from-white to-slate-50 border border-slate-200 rounded-xl shadow hover:shadow-lg transition-transform transform hover:-translate-y-1 cursor-pointer"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <div className="font-semibold text-slate-800">{r.routeName}</div>
-                  <div className="text-sm text-slate-600">Route: {r.routeNumber}</div>
-                  <div className="text-sm text-slate-600 mt-1">Next Stop: {r.nextStopName}</div>
-                </div>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    r.status === "active"
-                      ? "bg-emerald-500 text-white"
-                      : r.status === "maintenance"
-                      ? "bg-amber-500 text-white"
-                      : "bg-slate-400 text-white"
-                  }`}
-                >
-                  {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
-                </span>
-              </div>
-
-              <div className="mt-2 text-sm text-slate-700 font-medium">
-                Arrival: {r.arrival}
-              </div>
-
-              <div className="mt-2 text-xs text-slate-500">
-                Driver: {r.driver} <br />
-                Vehicle: {r.vehicle} ({r.licensePlate}) <br />
-                Passengers: {r.passengers}
-              </div>
-
-              <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-3">
+        <div className="max-h-[60vh] overflow-auto pr-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {rows.map((r) => {
+              const cls = statusMap[r.status] || statusMap["unknown"];
+              const displayStatus = r.status.charAt(0).toUpperCase() + r.status.slice(1);
+              return (
                 <div
-                  className={`h-2 rounded-full ${
-                    r.status === "active" ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
-                  }`}
-                  style={{ width: r.status === "active" ? "75%" : "40%" }}
-                ></div>
-              </div>
-            </div>
-          ))}
+                  key={r.id}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      // optional: navigate or focus map (left for integrator)
+                    }
+                  }}
+                  className="flex flex-col p-3 sm:p-4 bg-gradient-to-tr from-white to-slate-50 border border-slate-200 rounded-xl shadow hover:shadow-lg transition-transform duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <div className="font-semibold text-slate-800">{r.routeName}</div>
+                      <div className="text-sm text-slate-600">Route: {r.routeNumber}</div>
+                      <div className="text-sm text-slate-600 mt-1">Next Stop: {r.nextStopName}</div>
+                    </div>
+                    <span className={`${cls.bg} ${cls.text} px-2 py-1 rounded-full text-xs font-semibold`} aria-live="polite">
+                      {displayStatus}
+                    </span>
+                  </div>
+
+                  <div className="mt-2 text-sm text-slate-700 font-medium">Arrival: {r.arrival}</div>
+
+                  <div className="mt-2 text-xs text-slate-500">
+                    Driver: {r.driver} <br />
+                    Vehicle: {r.vehicle} ({r.licensePlate}) <br />
+                    Passengers: {r.passengers}
+                  </div>
+
+                  <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-3" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={r.status === "active" ? 75 : 40} aria-label={`Occupancy ${r.passengers}`}>
+                    <div
+                      className={`${cls.progressBg} h-2 rounded-full motion-safe:animate-pulse`}
+                      style={{ width: r.status === "active" ? "75%" : "40%" }}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       ) : (
-        <div className="text-center py-8">
+        <div className="text-center py-6">
           <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">🚌</span>
           </div>
