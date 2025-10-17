@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
-import type { Marker as LeafletMarker } from 'leaflet';
 
 // Fix default markers in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -56,11 +55,11 @@ interface BusLine {
   id: number;
   name: string;
   route_number: string;
-  current_location: { latitude: number; longitude: number; address: string; };
+  current_location: { latitude: number; longitude: number; address: string };
   status: string;
-  passengers: { current: number; capacity: number; utilization_percentage: number; };
-  bus_stops: Array<{ id: number; name: string; latitude: number; longitude: number; estimated_arrival: string; is_next_stop: boolean; }>;
-  incidents: Array<{ id: number; type: string; description: string; reported_by: string; reported_time: string; status: string; priority: string; }>;
+  passengers: { current: number; capacity: number; utilization_percentage: number };
+  bus_stops: Array<{ id: number; name: string; latitude: number; longitude: number; estimated_arrival: string; is_next_stop: boolean }>;
+  incidents: Array<{ id: number; type: string; description: string; reported_by: string; reported_time: string; status: string; priority: string }>;
 }
 
 interface MapProps {
@@ -70,7 +69,7 @@ interface MapProps {
   onRouteSelect?: (routeId: number) => void;
 }
 
-// Update map center when selected route changes
+// MapUpdater: centers the map on the selected route
 function MapUpdater({ selectedRouteId, lines }: { selectedRouteId?: number; lines: BusLine[] }) {
   const map = useMap();
   useEffect(() => {
@@ -85,11 +84,14 @@ function MapUpdater({ selectedRouteId, lines }: { selectedRouteId?: number; line
 export default function Map({ className = "", lines, selectedRouteId, onRouteSelect }: MapProps) {
   const activeLines = lines.filter(l => l.status.toLowerCase() === 'active');
   const selectedLine = lines.find(l => l.id === selectedRouteId);
-const markerRefs = useRef<Record<number, L.Marker | null>>({});
 
-  const defaultCenter: [number, number] = [3.1390, 101.6869];
+  // Use L.Marker class directly, no namespace/type issue
+  const markerRefs = useRef<Record<number, L.Marker | null>>({});
+
+  const defaultCenter: [number, number] = [3.1390, 101.6869]; // Kuala Lumpur
   const defaultZoom = 11;
 
+  // Auto-open popup for selected route
   useEffect(() => {
     if (selectedRouteId && markerRefs.current[selectedRouteId]) {
       setTimeout(() => markerRefs.current[selectedRouteId]?.openPopup(), 800);
@@ -129,7 +131,9 @@ const markerRefs = useRef<Record<number, L.Marker | null>>({});
                   <div className="text-xs text-gray-600 mb-3 font-medium">{line.name}</div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Status:</span>
-                    <span className={`font-medium px-2 py-1 rounded text-xs ${line.status.toLowerCase() === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{line.status}</span>
+                    <span className={`font-medium px-2 py-1 rounded text-xs ${line.status.toLowerCase() === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                      {line.status}
+                    </span>
                   </div>
                 </div>
               </Popup>
