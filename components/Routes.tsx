@@ -23,10 +23,10 @@ export default function Routes({ routes, className = "" }: RoutesProps) {
       className={`rounded-2xl bg-white border border-slate-200 shadow-lg ${className}`}
     >
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-t-2xl">
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-t-2xl">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-200 flex items-center justify-center shadow-md">
-            <span className="text-2xl">🚌</span>
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-200 flex items-center justify-center shadow-md">
+            <span className="text-xl sm:text-2xl">🚌</span>
           </div>
           <div>
             <h2 className="text-lg font-bold text-slate-800">Active Routes</h2>
@@ -36,9 +36,9 @@ export default function Routes({ routes, className = "" }: RoutesProps) {
       </div>
 
       {/* Route Cards */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6 max-h-[60vh] sm:max-h-none overflow-auto">
         {displayRoutes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {displayRoutes.map((route, index) => (
               <RouteCard key={route.id || index} route={route} index={index} />
             ))}
@@ -53,7 +53,7 @@ export default function Routes({ routes, className = "" }: RoutesProps) {
           </div>
         )}
 
-        <button className="w-full mt-6 py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors">
+        <button className="w-full mt-4 sm:mt-6 py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
           View All Routes →
         </button>
       </div>
@@ -71,13 +71,25 @@ function RouteCard({ route, index }: { route: Route; index: number }) {
     : "bg-slate-400 text-white";
 
   return (
-    <div className="flex flex-col p-4 rounded-xl border border-slate-200 bg-gradient-to-tr from-white to-slate-50 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1 cursor-pointer">
+    <div
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          // optional: navigate or trigger action
+        }
+      }}
+      className={`flex flex-col p-3 sm:p-4 rounded-xl border border-slate-200 bg-gradient-to-tr from-white to-slate-50 shadow transition-transform duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300
+        ${isActive ? "hover:shadow-lg motion-safe:transform motion-safe:hover:-translate-y-1" : "hover:shadow-md"}
+      `}
+    >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          <div className={`w-3 h-3 rounded-full ${isActive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`}></div>
+          <div className={`w-3.5 h-3.5 rounded-full ${isActive ? "bg-emerald-500 motion-safe:animate-pulse" : "bg-slate-400"}`}></div>
           <div>
             <div className="font-semibold text-slate-800">Route {route?.route_number || `#${index + 1}`}</div>
-            <div className="text-sm text-slate-600">{route?.destination || "Downtown"}</div>
+            <div className="text-sm text-slate-600 truncate">{route?.destination || "Downtown"}</div>
           </div>
         </div>
 
@@ -87,9 +99,9 @@ function RouteCard({ route, index }: { route: Route; index: number }) {
       </div>
 
       {/* Progress / Status bar */}
-      <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-2">
+      <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-2" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={isActive ? 75 : 40} aria-label="Occupancy">
         <div
-          className={`h-2 rounded-full ${isActive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`}
+          className={`h-2 rounded-full ${isActive ? "bg-emerald-500 motion-safe:animate-pulse" : "bg-slate-400"}`}
           style={{ width: isActive ? "75%" : "40%" }}
         ></div>
       </div>
